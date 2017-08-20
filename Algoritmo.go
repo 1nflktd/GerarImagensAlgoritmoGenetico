@@ -12,10 +12,10 @@ type Algoritmo struct {
 	caracteres string
 }
 
-func (a *Algoritmo) novaGeracao(populacao Populacao, elitismo bool) (Populacao) {
+func (a *Algoritmo) novaGeracao(populacao * Populacao, elitismo bool) (*Populacao) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	//nova população do mesmo tamanho da antiga
-	novaPopulacao := Populacao{}
+	novaPopulacao := &Populacao{}
 	novaPopulacao.InitEmpty(populacao.getTamPopulacao())
 
 	//se tiver elitismo, mantém o melhor indivíduo da geração atual
@@ -27,14 +27,16 @@ func (a *Algoritmo) novaGeracao(populacao Populacao, elitismo bool) (Populacao) 
 	for novaPopulacao.getNumIndividuos() < novaPopulacao.getTamPopulacao() {
 		//seleciona os 2 pais por torneio
 		pais := a.selecaoTorneio(populacao)
-		filhos := [2]Individuo{}
+		filhos := [2]*Individuo{}
 
 		//verifica a taxa de crossover, se sim realiza o crossover, se não, mantém os pais selecionados para a próxima geração
 		if r.Float64() <= a.taxaDeCrossover {
 			filhos = a.crossover(pais[1], pais[0])
 		} else {
-			filhos[0].InitGenes(pais[0].getGenes(), *a)
-			filhos[1].InitGenes(pais[1].getGenes(), *a)
+			filhos[0] = &Individuo{}
+			filhos[0].InitGenes(pais[0].getGenes(), a)
+			filhos[1] = &Individuo{}
+			filhos[1].InitGenes(pais[1].getGenes(), a)
 		}
 
 		//adiciona os filhos na nova geração
@@ -63,7 +65,7 @@ func (a *Algoritmo) obterPontosCorte(pos1, pos2 int, genes string) (pontoCorte1,
 	return
 }
 
-func (a *Algoritmo) crossover(individuo1, individuo2 Individuo) ([2]Individuo) {
+func (a *Algoritmo) crossover(individuo1, individuo2 *Individuo) ([2]*Individuo) {
 	//pega os genes dos pais
 	genePai1 := individuo1.getGenes()
 	genePai2 := individuo2.getGenes()
@@ -88,14 +90,16 @@ func (a *Algoritmo) crossover(individuo1, individuo2 Individuo) ([2]Individuo) {
 	geneFilho2 += string(genePai2[pontoCorte2Pai2:])
 
 	//cria o novo indivíduo com os genes dos pais
-	filhos := [2]Individuo{}
-	filhos[0].InitGenes(geneFilho1, *a)
-	filhos[1].InitGenes(geneFilho2, *a)
+	filhos := [2]*Individuo{}
+	filhos[0] = &Individuo{}
+	filhos[0].InitGenes(geneFilho1, a)
+	filhos[1] = &Individuo{}
+	filhos[1].InitGenes(geneFilho2, a)
 
 	return filhos
 }
 
-func (a *Algoritmo) selecaoTorneio(populacao Populacao) ([2]Individuo) {
+func (a *Algoritmo) selecaoTorneio(populacao * Populacao) ([2]*Individuo) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	populacaoIntermediaria := &Populacao{}
@@ -110,7 +114,7 @@ func (a *Algoritmo) selecaoTorneio(populacao Populacao) ([2]Individuo) {
 	populacaoIntermediaria.ordenaPopulacao()
 
 	//seleciona os 2 melhores deste população
-	pais := [2]Individuo{}
+	pais := [2]*Individuo{}
 	pais[0] = populacaoIntermediaria.getIndividuo(0)
 	pais[1] = populacaoIntermediaria.getIndividuo(1)
 

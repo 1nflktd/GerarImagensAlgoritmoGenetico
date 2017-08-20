@@ -7,7 +7,7 @@ import (
 type App struct {}
 
 func (a *App) Run() {
-	algoritmo := Algoritmo{}
+	algoritmo := &Algoritmo{}
 	//Define a solução
 	algoritmo.setSolucao("A dúvida é o princípio da sabedoria")
 	//Define os caracteres existentes
@@ -27,7 +27,7 @@ func (a *App) Run() {
 	numGenes := len([]rune(algoritmo.getSolucao()))
 
 	//cria a primeira população aleatÃ©rioa
-	populacao := Populacao{}
+	populacao := &Populacao{}
 	populacao.InitRandom(numGenes, tamPop, algoritmo)
 
 	temSolucao := false

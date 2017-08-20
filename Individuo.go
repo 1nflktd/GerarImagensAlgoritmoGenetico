@@ -6,7 +6,7 @@ import (
 )
 
 type Individuo struct {
-	algoritmo Algoritmo
+	algoritmo *Algoritmo
 	genes string
 	aptidao int
 }
@@ -22,7 +22,7 @@ func (iv *Individuo) obterCaractereUTF8(caracteres string, index int) string {
 	return ""
 }
 
-func (iv *Individuo) InitRandom(numGenes int, alg Algoritmo) {
+func (iv *Individuo) InitRandom(numGenes int, alg *Algoritmo) {
 	iv.genes = ""
 	iv.algoritmo = alg
 
@@ -37,7 +37,7 @@ func (iv *Individuo) InitRandom(numGenes int, alg Algoritmo) {
 	iv.geraAptidao()
 }
 
-func (iv *Individuo) InitGenes(genes string, alg Algoritmo) {
+func (iv *Individuo) InitGenes(genes string, alg *Algoritmo) {
 	iv.genes = genes
 	iv.algoritmo = alg
 

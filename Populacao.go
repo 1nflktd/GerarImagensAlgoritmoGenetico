@@ -1,16 +1,16 @@
 package main
 
 type Populacao struct {
-	individuos []Individuo
+	individuos []*Individuo
 	tamPopulacao int
 }
 
 //cria uma população com indivíduos aleatória
-func (p *Populacao) InitRandom(numGenes, tamPop int, alg Algoritmo) {
+func (p *Populacao) InitRandom(numGenes, tamPop int, alg *Algoritmo) {
 	p.tamPopulacao = tamPop
-	p.individuos = make([]Individuo, tamPop)
+	p.individuos = make([]*Individuo, tamPop)
 	for i := 0; i < tamPop; i++ {
-		p.individuos[i] = Individuo{}
+		p.individuos[i] = &Individuo{}
 		p.individuos[i].InitRandom(numGenes, alg)
 	}
 }
@@ -18,18 +18,18 @@ func (p *Populacao) InitRandom(numGenes, tamPop int, alg Algoritmo) {
 //cria uma população com indivíduos sem valor, será composto posteriormente
 func (p *Populacao) InitEmpty(tamPop int) {
 	p.tamPopulacao = tamPop
-	p.individuos = make([]Individuo, tamPop)
+	p.individuos = make([]*Individuo, tamPop)
 }
 
 //coloca um indivíduo em uma certa posição da população
-func (p *Populacao) setIndividuoPos(individuo Individuo, posicao int) {
+func (p *Populacao) setIndividuoPos(individuo *Individuo, posicao int) {
 	p.individuos[posicao] = individuo
 }
 
 //coloca um indivíduo na próxima posição disponível da população
-func (p *Populacao) setIndividuo(individuo Individuo) {
+func (p *Populacao) setIndividuo(individuo *Individuo) {
 	for i := 0; i < p.tamPopulacao; i++ {
-		if p.individuos[i].getGenes() == "" {
+		if p.individuos[i] == nil {
 			p.individuos[i] = individuo
 			return
 		}
@@ -38,15 +38,15 @@ func (p *Populacao) setIndividuo(individuo Individuo) {
 
 //verifica se algum indivíduo da população possui a solução
 func (p *Populacao) temSolucao(solucao string) bool {
-	var i Individuo
+	var i *Individuo
 	for j := 0; j < p.tamPopulacao; j++ {
 		if p.individuos[j].getGenes() == solucao {
 			i = p.individuos[j]
-			break;
+			break
 		}
 	}
 
-	if i.getGenes() == "" { // == nil
+	if i == nil {
 		return false
 	}
 
@@ -73,7 +73,7 @@ func (p *Populacao) ordenaPopulacao() {
 func (p *Populacao) getNumIndividuos() int {
 	num := 0
 	for i := 0; i < p.tamPopulacao; i++ {
-		if p.individuos[i].getGenes() != "" { //  != nil
+		if p.individuos[i] != nil {
 			num++
 		}
 	}
@@ -84,6 +84,6 @@ func (p *Populacao) getTamPopulacao() int {
 	return p.tamPopulacao
 }
 
-func (p *Populacao) getIndividuo(pos int) Individuo {
+func (p *Populacao) getIndividuo(pos int) *Individuo {
 	return p.individuos[pos]
 }
