@@ -33,8 +33,8 @@ func (a *Algoritmo) novaGeracao(populacao Populacao, elitismo bool) (Populacao) 
 		if r.Float64() <= a.taxaDeCrossover {
 			filhos = a.crossover(pais[1], pais[0])
 		} else {
-			filhos[0].InitGenes(pais[0].getGenes())
-			filhos[1].InitGenes(pais[1].getGenes())
+			filhos[0].InitGenes(pais[0].getGenes(), *a)
+			filhos[1].InitGenes(pais[1].getGenes(), *a)
 		}
 
 		//adiciona os filhos na nova geração
@@ -48,42 +48,49 @@ func (a *Algoritmo) novaGeracao(populacao Populacao, elitismo bool) (Populacao) 
 	return novaPopulacao
 }
 
+func (a *Algoritmo) obterPontosCorte(pos1, pos2 int, genes string) (pontoCorte1, pontoCorte2 int) {
+	i := 0
+	for p, _ := range genes {
+		if i == pos1 {
+			pontoCorte1 = p
+		} else if i == pos2 {
+			pontoCorte2 = p
+			break
+		}
+		i++
+	}
+
+	return
+}
+
 func (a *Algoritmo) crossover(individuo1, individuo2 Individuo) ([2]Individuo) {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	//sorteia o ponto de corte
-	pontoCorte1 := r.Intn((len(individuo1.getGenes())/2) - 2) + 1
-	pontoCorte2 := r.Intn((len(individuo1.getGenes())/2) - 2) + len(individuo1.getGenes()) / 2
-
 	//pega os genes dos pais
 	genePai1 := individuo1.getGenes()
 	genePai2 := individuo2.getGenes()
 
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	tamanho := len([]rune(genePai1))
+	pos1 := r.Intn((tamanho/2) - 2) + 1
+	pos2 := r.Intn((tamanho/2) - 2) + tamanho / 2
+
+	//sorteia o ponto de corte
+	pontoCorte1Pai1, pontoCorte2Pai1 := a.obterPontosCorte(pos1, pos2, genePai1)
+	pontoCorte1Pai2, pontoCorte2Pai2 := a.obterPontosCorte(pos1, pos2, genePai2)
+
 	//realiza o corte,
-	/*
-	geneFilho1 := genePai1.substring(0, pontoCorte1)
-	geneFilho1 += genePai2.substring(pontoCorte1, pontoCorte2)
-	geneFilho1 += genePai1.substring(pontoCorte2, len(genePai1))
-	*/
+	geneFilho1 := string(genePai1[0:pontoCorte1Pai1])
+	geneFilho1 += string(genePai2[pontoCorte1Pai2:pontoCorte2Pai2])
+	geneFilho1 += string(genePai1[pontoCorte2Pai1:])
 
-	geneFilho1 := genePai1[0:pontoCorte1]
-	geneFilho1 += genePai2[pontoCorte1:pontoCorte2]
-	geneFilho1 += genePai1[pontoCorte2:len(genePai1)]
-
-	/*
-	geneFilho2 = genePai2.substring(0, pontoCorte1)
-	geneFilho2 += genePai1.substring(pontoCorte1, pontoCorte2)
-	geneFilho2 += genePai2.substring(pontoCorte2, len(genePai2))
-	*/
-
-	geneFilho2 := genePai2[0:pontoCorte1]
-	geneFilho2 += genePai1[pontoCorte1:pontoCorte2]
-	geneFilho2 += genePai2[pontoCorte2:len(genePai2)]
+	geneFilho2 := string(genePai2[0:pontoCorte1Pai2])
+	geneFilho2 += string(genePai1[pontoCorte1Pai1:pontoCorte2Pai1])
+	geneFilho2 += string(genePai2[pontoCorte2Pai2:])
 
 	//cria o novo indivíduo com os genes dos pais
 	filhos := [2]Individuo{}
-	filhos[0].InitGenes(geneFilho1)
-	filhos[1].InitGenes(geneFilho2)
+	filhos[0].InitGenes(geneFilho1, *a)
+	filhos[1].InitGenes(geneFilho2, *a)
 
 	return filhos
 }

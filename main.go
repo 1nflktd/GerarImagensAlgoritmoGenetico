@@ -66,6 +66,8 @@ func writeImage(w http.ResponseWriter, img *image.Image) {
 }
 
 func main() {
-	http.HandleFunc("/image/", imageHandler)
-    log.Fatal(http.ListenAndServe(":8000", nil))
+	//http.HandleFunc("/image/", imageHandler)
+	//log.Fatal(http.ListenAndServe(":8000", nil))
+	app := &App{}
+	app.Run()
 }

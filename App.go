@@ -19,16 +19,16 @@ func (a *App) Run() {
 	//elitismo
 	elitismo := true
 	//tamanho da população
-	tamPop := 100
+	tamPop := 1000
 	//numero mÃ¡ximo de gerações
 	numMaxGeracoes := 10000
 
 	//define o nÃºmero de genes do indivÃ­duo baseado na solução
-	numGenes := len(algoritmo.getSolucao())
+	numGenes := len([]rune(algoritmo.getSolucao()))
 
 	//cria a primeira população aleatÃ©rioa
 	populacao := Populacao{}
-	populacao.InitRandom(numGenes, tamPop)
+	populacao.InitRandom(numGenes, tamPop, algoritmo)
 
 	temSolucao := false
 	geracao := 0
@@ -43,7 +43,7 @@ func (a *App) Run() {
 		populacao = algoritmo.novaGeracao(populacao, elitismo)
 		individuo0 := populacao.getIndividuo(0)
 
-		fmt.Printf("Geração %d | Aptidão: %d | Melhor: %d\n", geracao, individuo0.getAptidao(), individuo0.getGenes())
+		fmt.Printf("Geração %d | Aptidão: %d | Melhor: %s\n", geracao, individuo0.getAptidao(), individuo0.getGenes())
 
 		//verifica se tem a solucao
 		temSolucao = populacao.temSolucao(algoritmo.getSolucao())
@@ -51,11 +51,11 @@ func (a *App) Run() {
 
 	if geracao == numMaxGeracoes {
 		individuo0 := populacao.getIndividuo(0)
-		fmt.Printf("NÃºmero Maximo de Gerações | %d %d\n", individuo0.getGenes(), individuo0.getAptidao())
+		fmt.Printf("Numero Maximo de Gerações | %s %d\n", individuo0.getGenes(), individuo0.getAptidao())
 	}
 
 	if temSolucao {
 		individuo0 := populacao.getIndividuo(0)
-		fmt.Printf("Encontrado resultado na geração %d | %d  (AptidÃ£o: %d)\n", geracao, individuo0.getGenes(), individuo0.getAptidao())
+		fmt.Printf("Encontrado resultado na geração %d | %s (Aptidao: %d)\n", geracao, individuo0.getGenes(), individuo0.getAptidao())
 	}
 }
