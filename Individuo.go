@@ -13,7 +13,7 @@ type Individuo struct {
 
 func (iv *Individuo) obterCaractereUTF8(caracteres string, index int) string {
 	i := 0
-    for _, x := range caracteres {
+	for _, x := range caracteres {
 		if i == index {
 			return string(x)
 		}

@@ -2,16 +2,18 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 )
 
 type App struct {}
 
-func (a *App) Run() {
+func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	algoritmo := &Algoritmo{}
 	//Define a solução
-	algoritmo.setSolucao("A dúvida é o princípio da sabedoria")
+	//algoritmo.setSolucao("A dúvida é o princípio da sabedoria")
+	algoritmo.setSolucao(d.toString())
 	//Define os caracteres existentes
-	algoritmo.setCaracteres("!,.:;àáãâúíóôõéêQWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890 ")
+	algoritmo.setCaracteres("abcdef1234567890")
 	//taxa de crossover de 60%
 	algoritmo.setTaxaDeCrossover(0.6)
 	//taxa de mutação de 3%
@@ -19,7 +21,7 @@ func (a *App) Run() {
 	//elitismo
 	elitismo := true
 	//tamanho da população
-	tamPop := 1000
+	tamPop := 100
 	//numero mÃ¡ximo de gerações
 	numMaxGeracoes := 10000
 
@@ -44,6 +46,10 @@ func (a *App) Run() {
 		individuo0 := populacao.getIndividuo(0)
 
 		fmt.Printf("Geração %d | Aptidão: %d | Melhor: %s\n", geracao, individuo0.getAptidao(), individuo0.getGenes())
+
+		data := &Data{}
+		data.fromString(individuo0.getGenes())
+		printImage(respWr, req, data)
 
 		//verifica se tem a solucao
 		temSolucao = populacao.temSolucao(algoritmo.getSolucao())
