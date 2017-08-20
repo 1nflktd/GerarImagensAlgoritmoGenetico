@@ -49,7 +49,7 @@ func printImage(respWr http.ResponseWriter, req *http.Request, d *Data) {
 				cr.Brightness(float64(x), float64(y)),
 				cg.Brightness(float64(x), float64(y)),
 				cb.Brightness(float64(x), float64(y)),
-				255,
+				uint8(d.a),
 			}
 			m.Set(x, y, c)
 		}
@@ -61,7 +61,7 @@ func printImage(respWr http.ResponseWriter, req *http.Request, d *Data) {
 
 func imageHandler(w http.ResponseWriter, r *http.Request) {
 	app := &App{}
-	app.Run(w, r, &Data{hw: 140, hh:120, r: 40, ang: 60, a: 255})
+	app.Run(w, r, &Data{hw: 140, hh:120, r: 40, ang: 52, a: 255})
 }
 
 var ImageTemplate string = `<!DOCTYPE html>
