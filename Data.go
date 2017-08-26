@@ -5,17 +5,46 @@ import (
 	"strconv"
 )
 
-// preparado para 0 até 255
-type Data struct {
-	hours, minutes, seconds, red, green, blue uint8
+type Circle struct {
+	x, y, r, red, green, blue uint8
 }
 
-func NewData(hours, minutes, seconds, red, green, blue uint8) *Data {
-	return &Data{hours: hours, minutes: minutes, seconds: seconds, red: red, green: green, blue: blue}
+type Rectangle struct {
+	x, y, w, h, red, green, blue uint8
+}
+
+type Triangle struct {
+	p1, p2, p3, red, green, blue uint8
+}
+
+// preparado para 0 até 255
+type Data struct {
+	circles []Circle
+	rectangles []Rectangle
+	triangles []Triangle
+	nCircles, nRectangles, nTriangles int
+}
+
+func NewData(circles []Circle, rectangles []Rectangle, triangles []Triangle, nCircles, nRectangles, nTriangles int) *Data {
+	return &Data{circles, rectangles, triangles, nCircles, nRectangles, nTriangles}
 }
 
 func (d *Data) toString() string {
-	return fmt.Sprintf("%02x%02x%02x%02x%02x%02x", d.hours, d.minutes, d.seconds, d.red, d.green, d.blue)
+	hex := ""
+
+	for _, c := range d.circles {
+		hex += fmt.Sprintf("%02x%02x%02x%02x%02x%02x", c.x, c.y, c.r, c.red, c.green, c.blue)
+	}
+
+	for _, r := range d.rectangles {
+		hex += fmt.Sprintf("%02x%02x%02x%02x%02x%02x%02x", r.x, r.y, r.w, r.h, r.red, r.green, r.blue)
+	}
+
+	for _, t := range d.triangles {
+		hex += fmt.Sprintf("%02x%02x%02x%02x%02x%02x", t.p1, t.p2, t.p3, t.red, t.green, t.blue)
+	}
+
+	return hex
 }
 
 func (d *Data) hexToUint(hex string) uint8 {
@@ -23,11 +52,50 @@ func (d *Data) hexToUint(hex string) uint8 {
 	return uint8(n)
 }
 
-func (d *Data) fromString(data string) {
-	d.hours = d.hexToUint(data[0:2])
-	d.minutes = d.hexToUint(data[2:4])
-	d.seconds = d.hexToUint(data[4:6])
-	d.red = d.hexToUint(data[6:8])
-	d.green = d.hexToUint(data[8:10])
-	d.blue = d.hexToUint(data[10:12])
+func (d *Data) fromString(data string, nCircles, nRectangles, nTriangles int) {
+	d.nCircles, d.nRectangles, d.nTriangles = nCircles, nRectangles, nTriangles
+	d.circles = make([]Circle, nCircles)
+	for i := 0; i < nCircles; i++ {
+		base := i * 6 // 6 fields
+		circle := Circle{
+			d.hexToUint(data[base:base+2]),
+			d.hexToUint(data[base+2:base+4]),
+			d.hexToUint(data[base+4:base+6]),
+			d.hexToUint(data[base+6:base+8]),
+			d.hexToUint(data[base+8:base+10]),
+			d.hexToUint(data[base+10:base+12]),
+		}
+		d.circles[i] = circle
+	}
+
+	d.rectangles = make([]Rectangle, nRectangles)
+	iniR := (nCircles * 6) + 12
+	for i := 0; i < nRectangles; i++ {
+		base := iniR + (i * 7) // 7 fields
+		rectangle := Rectangle{
+			d.hexToUint(data[base:base+2]),
+			d.hexToUint(data[base+2:base+4]),
+			d.hexToUint(data[base+4:base+6]),
+			d.hexToUint(data[base+6:base+8]),
+			d.hexToUint(data[base+8:base+10]),
+			d.hexToUint(data[base+10:base+12]),
+			d.hexToUint(data[base+12:base+14]),
+		}
+		d.rectangles[i] = rectangle
+	}
+
+	d.triangles = make([]Triangle, nTriangles)
+	iniT := iniR + (nRectangles * 7) + 14
+	for i := 0; i < nTriangles; i++ {
+		base := iniT + (i * 6) // 6 fields
+		triangle := Triangle{
+			d.hexToUint(data[base:base+2]),
+			d.hexToUint(data[base+2:base+4]),
+			d.hexToUint(data[base+4:base+6]),
+			d.hexToUint(data[base+6:base+8]),
+			d.hexToUint(data[base+8:base+10]),
+			d.hexToUint(data[base+10:base+12]),
+		}
+		d.triangles[i] = triangle
+	}
 }

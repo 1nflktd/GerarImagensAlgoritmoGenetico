@@ -47,7 +47,7 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 		fmt.Printf("Geração %d | Aptidão: %d | Melhor: %s\n", geracao, individuo0.getAptidao(), individuo0.getGenes())
 
 		data := &Data{}
-		data.fromString(individuo0.getGenes())
+		data.fromString(individuo0.getGenes(), d.nCircles, d.nRectangles, d.nTriangles)
 		printImage(respWr, req, data)
 
 		//verifica se tem a solucao
