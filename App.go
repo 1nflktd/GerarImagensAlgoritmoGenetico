@@ -10,7 +10,6 @@ type App struct {}
 func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	algoritmo := &Algoritmo{}
 	//Define a solução
-	//algoritmo.setSolucao("A dúvida é o princípio da sabedoria")
 	algoritmo.setSolucao(d.toString())
 	//Define os caracteres existentes
 	algoritmo.setCaracteres("abcdef1234567890")

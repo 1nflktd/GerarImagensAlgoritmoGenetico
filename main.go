@@ -2,17 +2,19 @@ package main
 
 import (
 	"bytes"
-	"image"
-	"image/color"
-	"image/jpeg"
 	"log"
 	"net/http"
 	"strconv"
 	"math"
 	"encoding/base64"
 	"html/template"
-	//"math/rand"
-	//"time"
+	"math/rand"
+	"time"
+
+	"image"
+	"image/jpeg"
+
+	"github.com/fogleman/gg"
 )
 
 type Circle struct {
@@ -30,38 +32,65 @@ func (c *Circle) Brightness(x, y float64) uint8 {
 }
 
 func printImage(respWr http.ResponseWriter, req *http.Request, d *Data) {
-	//rd := rand.New(rand.NewSource(time.Now().UnixNano()))
-	var w, h int = 280, 240
-	//var hw, hh float64 = float64(rd.Intn(w) / 2), float64(rd.Intn(h) / 2)
-	var hw, hh float64 = float64(d.hw), float64(d.hh)
-	//r := 40.0
-	r := float64(d.r)
-	//ang := 2 * math.Pi / 3
-	ang := float64(d.ang)
-	//ang := float64(rd.Intn(90))
-	cr := &Circle{hw - r*math.Sin(0), hh - r*math.Cos(0), 60}
-	cg := &Circle{hw - r*math.Sin(ang), hh - r*math.Cos(ang), 60}
-	cb := &Circle{hw - r*math.Sin(-ang), hh - r*math.Cos(-ang), 60}
-	m := image.NewRGBA(image.Rect(0, 0, w, h))
-	for x := 1; x < w; x++ {
-		for y := 1; y < h; y++ {
-			c := color.RGBA{
-				cr.Brightness(float64(x), float64(y)),
-				cg.Brightness(float64(x), float64(y)),
-				cb.Brightness(float64(x), float64(y)),
-				uint8(d.a),
-			}
-			m.Set(x, y, c)
-		}
+	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	const X, Y = 280, 240
+    dc := gg.NewContext(280, 240)
+    dc.SetRGB(1, 1, 1)
+    dc.Clear()
+
+    // numero de retangulos, baseado na hora
+    for i := uint8(0); i < d.hours; i++ {
+	    red := rd.Float64() * float64(d.red)
+	    green := rd.Float64() * float64(d.green)
+	    blue := rd.Float64() * float64(d.blue)
+
+	    dc.DrawCircle(float64(rd.Intn(X)), float64(rd.Intn(Y)), float64(rd.Intn(5)))
+	    dc.SetRGB(red/255, green/255, blue/255)
+	    dc.FillPreserve()
+	    dc.Stroke()
 	}
-	var img image.Image = m
-	//writeImage(respWr, &img)
+
+    // numero de circulos, baseado nos minutos
+    for i := uint8(0); i < d.minutes; i++ {
+	    red := rd.Float64() * float64(d.red)
+	    green := rd.Float64() * float64(d.green)
+	    blue := rd.Float64() * float64(d.blue)
+
+	    dc.DrawRectangle(float64(rd.Intn(X)), float64(rd.Intn(Y)), float64(rd.Intn(X/5)), float64(rd.Intn(Y/5)))
+	    dc.SetRGB(red/255, green/255, blue/255)
+	    dc.FillPreserve()
+	    dc.Stroke()
+	}
+
+    // numero de triangulos, baseado nos segundos
+    for i := uint8(0); i < d.seconds; i++ {
+	    red := rd.Float64() * float64(d.red)
+	    green := rd.Float64() * float64(d.green)
+	    blue := rd.Float64() * float64(d.blue)
+
+    	x1, y1, y2 := float64(rd.Intn(X/10)), float64(rd.Intn(Y/10)), float64(rd.Intn(Y/10))
+	    dc.LineTo(x1, y1)
+	    dc.LineTo(y1, y2)
+	    dc.LineTo(y2, x1)
+	    dc.SetRGB(red/255, green/255, blue/255)
+	    dc.FillPreserve()
+	    dc.Stroke()
+	}
+
+	var img image.Image = dc.Image()
 	writeImageWithTemplate(respWr, &img)
 }
 
 func imageHandler(w http.ResponseWriter, r *http.Request) {
 	app := &App{}
-	app.Run(w, r, &Data{hw: 140, hh:120, r: 40, ang: 52, a: 255})
+
+	red := uint8(152)
+	green := uint8(132)
+	blue := uint8(255)
+
+	now := time.Now()
+	app.Run(w, r, NewData(uint8(now.Hour()), uint8(now.Minute()), uint8(now.Second()), red, green, blue))
 }
 
 var ImageTemplate string = `<!DOCTYPE html>

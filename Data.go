@@ -7,23 +7,27 @@ import (
 
 // preparado para 0 até 255
 type Data struct {
-	//crx, cry, cgx, cgy, cbx, cby, 
-	hw, hh, r, ang, a int
+	hours, minutes, seconds, red, green, blue uint8
+}
+
+func NewData(hours, minutes, seconds, red, green, blue uint8) *Data {
+	return &Data{hours: hours, minutes: minutes, seconds: seconds, red: red, green: green, blue: blue}
 }
 
 func (d *Data) toString() string {
-	return fmt.Sprintf("%x%x%x%x%x", d.hw, d.hh, d.r, d.ang, d.a)
+	return fmt.Sprintf("%02x%02x%02x%02x%02x%02x", d.hours, d.minutes, d.seconds, d.red, d.green, d.blue)
 }
 
-func (d *Data) hexToInt(hex string) int {
+func (d *Data) hexToUint(hex string) uint8 {
 	n, _ := strconv.ParseUint(hex, 16, 32)
-	return int(n)
+	return uint8(n)
 }
 
 func (d *Data) fromString(data string) {
-	d.hw = d.hexToInt(data[0:2])
-	d.hh = d.hexToInt(data[2:4])
-	d.r = d.hexToInt(data[4:6])
-	d.ang = d.hexToInt(data[6:8])
-	d.a = d.hexToInt(data[8:10])
+	d.hours = d.hexToUint(data[0:2])
+	d.minutes = d.hexToUint(data[2:4])
+	d.seconds = d.hexToUint(data[4:6])
+	d.red = d.hexToUint(data[6:8])
+	d.green = d.hexToUint(data[8:10])
+	d.blue = d.hexToUint(data[10:12])
 }
