@@ -20,7 +20,7 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	//elitismo
 	elitismo := true
 	//tamanho da população
-	tamPop := 100
+	tamPop := 1000
 	//numero mÃ¡ximo de gerações
 	numMaxGeracoes := 10000
 
@@ -48,7 +48,7 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 
 		data := &Data{}
 		data.fromString(individuo0.getGenes(), d.nCircles, d.nRectangles, d.nTriangles)
-		printImage(respWr, req, data)
+		PrintImage(respWr, req, data)
 
 		//verifica se tem a solucao
 		temSolucao = populacao.temSolucao(algoritmo.getSolucao())

@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"math/rand"
+	"time"
 )
 
 type Circle struct {
@@ -99,3 +101,35 @@ func (d *Data) fromString(data string, nCircles, nRectangles, nTriangles int) {
 		d.triangles[i] = triangle
 	}
 }
+
+func CreateData() *Data {
+	now := time.Now()
+	nCircles := 3 // now.Hour()
+	nRectangles := now.Minute()
+	nTriangles := now.Second()
+	rd := rand.New(rand.NewSource(now.UnixNano()))
+
+    // numero de retangulos, baseado na hora
+	circles := make([]Circle, nCircles)
+    for i := 0; i < nCircles; i++ {
+		circle := Circle{uint8(rd.Intn(X)), uint8(rd.Intn(Y)), uint8(rd.Intn(50)), uint8(rd.Intn(255)), uint8(rd.Intn(255)), uint8(rd.Intn(255))}
+		circles[i] = circle
+	}
+
+    // numero de circulos, baseado nos minutos
+	rectangles := make([]Rectangle, nRectangles)
+    for i := 0; i < nRectangles; i++ {
+		rectangle := Rectangle{uint8(rd.Intn(X)), uint8(rd.Intn(Y)), uint8(rd.Intn(X/5)), uint8(rd.Intn(Y/5)), uint8(rd.Intn(255)), uint8(rd.Intn(255)), uint8(rd.Intn(255))}
+		rectangles[i] = rectangle
+	}
+
+    // numero de triangulos, baseado nos segundos
+	triangles := make([]Triangle, nTriangles)
+    for i := 0; i < nTriangles; i++ {
+		triangle := Triangle{uint8(rd.Intn(X/10)), uint8(rd.Intn(Y/10)), uint8(rd.Intn(Y/10)), uint8(rd.Intn(255)), uint8(rd.Intn(255)), uint8(rd.Intn(255))}
+		triangles[i] = triangle
+	}
+
+	return NewData(circles, rectangles, triangles, nCircles, nRectangles, nTriangles)
+}
+
