@@ -11,16 +11,18 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	algoritmo := &Algoritmo{}
 	//Define a solução
 	algoritmo.setSolucao(d.toString())
+	// Setar quantidade de formas
+	algoritmo.setNumeroFormas(d.nCircles, d.nRectangles, d.nTriangles)
 	//Define os caracteres existentes
 	algoritmo.setCaracteres("abcdef1234567890")
 	//taxa de crossover de 60%
-	algoritmo.setTaxaDeCrossover(0.6)
+	algoritmo.setTaxaDeCrossover(0.8)
 	//taxa de mutação de 3%
 	algoritmo.setTaxaDeMutacao(0.3)
 	//elitismo
 	elitismo := true
 	//tamanho da população
-	tamPop := 1000
+	tamPop := 2000
 	//numero mÃ¡ximo de gerações
 	numMaxGeracoes := 10000
 

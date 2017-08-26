@@ -9,7 +9,7 @@ import (
 
 func PrintImage(respWr http.ResponseWriter, req *http.Request, d *Data) {
     dc := gg.NewContext(X, Y)
-    dc.SetRGB(1, 1, 1)
+    dc.SetRGB(0.9, 0.9, 0.9)
     dc.Clear()
 
     for _, c := range d.circles {

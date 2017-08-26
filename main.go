@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"log"
 	"net/http"
-	"strconv"
 	"encoding/base64"
 	"html/template"
 
@@ -38,21 +37,6 @@ func writeImageWithTemplate(w http.ResponseWriter, img *image.Image) {
 		if err = tmpl.Execute(w, data); err != nil {
 			log.Println("unable to execute template.")
 		}
-	}
-}
-
-// writeImage escreve uma imagem no response writer
-func writeImage(w http.ResponseWriter, img *image.Image) {
-	buffer := new(bytes.Buffer)
-	if err := jpeg.Encode(buffer, *img, nil); err != nil {
-		log.Println("Nao foi possivel codificar a imagem.")
-	}
-
-	w.Header().Set("Content-Type", "image/jpeg")
-	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
-
-	if _, err := w.Write(buffer.Bytes()); err != nil {
-		log.Println("Nao foi possivel escrever a imagem.")
 	}
 }
 

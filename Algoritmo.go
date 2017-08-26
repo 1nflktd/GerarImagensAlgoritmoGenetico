@@ -10,6 +10,7 @@ type Algoritmo struct {
 	taxaDeCrossover float64
 	taxaDeMutacao float64
 	caracteres string
+	nCircles, nRectangles, nTriangles int
 }
 
 func (a *Algoritmo) novaGeracao(populacao * Populacao, elitismo bool) (*Populacao) {
@@ -50,13 +51,15 @@ func (a *Algoritmo) novaGeracao(populacao * Populacao, elitismo bool) (*Populaca
 	return novaPopulacao
 }
 
-func (a *Algoritmo) obterPontosCorte(pos1, pos2 int, genes string) (pontoCorte1, pontoCorte2 int) {
+func (a *Algoritmo) obterPontosCorte(pos1, pos2, pos3 int, genes string) (pontoCorte1, pontoCorte2, pontoCorte3 int) {
 	i := 0
 	for p, _ := range genes {
 		if i == pos1 {
 			pontoCorte1 = p
 		} else if i == pos2 {
 			pontoCorte2 = p
+		} else if i == pos3 {
+			pontoCorte3 = p
 			break
 		}
 		i++
@@ -73,21 +76,24 @@ func (a *Algoritmo) crossover(individuo1, individuo2 *Individuo) ([2]*Individuo)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	tamanho := len([]rune(genePai1))
-	pos1 := r.Intn((tamanho/2) - 2) + 1
-	pos2 := r.Intn((tamanho/2) - 2) + tamanho / 2
+	pos1 := r.Intn((tamanho/3) - 2) + 1
+	pos2 := r.Intn((tamanho/3) - 2) + tamanho / 3
+	pos3 := r.Intn((tamanho/3) - 2) + (tamanho*2) / 3
 
 	//sorteia o ponto de corte
-	pontoCorte1Pai1, pontoCorte2Pai1 := a.obterPontosCorte(pos1, pos2, genePai1)
-	pontoCorte1Pai2, pontoCorte2Pai2 := a.obterPontosCorte(pos1, pos2, genePai2)
+	pontoCorte1Pai1, pontoCorte2Pai1, pontoCorte3Pai1 := a.obterPontosCorte(pos1, pos2, pos3, genePai1)
+	pontoCorte1Pai2, pontoCorte2Pai2, pontoCorte3Pai2 := a.obterPontosCorte(pos1, pos2, pos3, genePai2)
 
 	//realiza o corte,
 	geneFilho1 := string(genePai1[0:pontoCorte1Pai1])
 	geneFilho1 += string(genePai2[pontoCorte1Pai2:pontoCorte2Pai2])
-	geneFilho1 += string(genePai1[pontoCorte2Pai1:])
+	geneFilho1 += string(genePai1[pontoCorte2Pai1:pontoCorte3Pai1])
+	geneFilho1 += string(genePai2[pontoCorte3Pai2:])
 
 	geneFilho2 := string(genePai2[0:pontoCorte1Pai2])
 	geneFilho2 += string(genePai1[pontoCorte1Pai1:pontoCorte2Pai1])
-	geneFilho2 += string(genePai2[pontoCorte2Pai2:])
+	geneFilho2 += string(genePai2[pontoCorte2Pai2:pontoCorte3Pai2])
+	geneFilho2 += string(genePai1[pontoCorte3Pai1:])
 
 	//cria o novo indivíduo com os genes dos pais
 	filhos := [2]*Individuo{}
@@ -151,4 +157,12 @@ func (a *Algoritmo) getCaracteres() string {
 
 func (a *Algoritmo) setCaracteres(caracteres string) {
 	a.caracteres = caracteres
+}
+
+func (a *Algoritmo) setNumeroFormas(nCircles, nRectangles, nTriangles int) {
+	a.nCircles, a.nRectangles, a.nTriangles = nCircles, nRectangles, nTriangles
+}
+
+func (a *Algoritmo) getNumeroFormas() (int, int, int) {
+	return a.nCircles, a.nRectangles, a.nTriangles
 }

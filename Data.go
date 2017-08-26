@@ -57,56 +57,69 @@ func (d *Data) hexToUint(hex string) uint8 {
 func (d *Data) fromString(data string, nCircles, nRectangles, nTriangles int) {
 	d.nCircles, d.nRectangles, d.nTriangles = nCircles, nRectangles, nTriangles
 	d.circles = make([]Circle, nCircles)
+	base := 0
 	for i := 0; i < nCircles; i++ {
-		base := i * 6 // 6 fields
-		circle := Circle{
-			d.hexToUint(data[base:base+2]),
-			d.hexToUint(data[base+2:base+4]),
-			d.hexToUint(data[base+4:base+6]),
-			d.hexToUint(data[base+6:base+8]),
-			d.hexToUint(data[base+8:base+10]),
-			d.hexToUint(data[base+10:base+12]),
-		}
-		d.circles[i] = circle
+		x := d.hexToUint(data[base:base+2])
+		base += 2
+		y := d.hexToUint(data[base:base+2])
+		base += 2
+		r := d.hexToUint(data[base:base+2])
+		base += 2
+		red := d.hexToUint(data[base:base+2])
+		base += 2
+		green := d.hexToUint(data[base:base+2])
+		base += 2
+		blue := d.hexToUint(data[base:base+2])
+		base += 2
+
+		d.circles[i] = Circle{x, y, r, red, green, blue}
 	}
 
 	d.rectangles = make([]Rectangle, nRectangles)
-	iniR := (nCircles * 6) + 12
 	for i := 0; i < nRectangles; i++ {
-		base := iniR + (i * 7) // 7 fields
-		rectangle := Rectangle{
-			d.hexToUint(data[base:base+2]),
-			d.hexToUint(data[base+2:base+4]),
-			d.hexToUint(data[base+4:base+6]),
-			d.hexToUint(data[base+6:base+8]),
-			d.hexToUint(data[base+8:base+10]),
-			d.hexToUint(data[base+10:base+12]),
-			d.hexToUint(data[base+12:base+14]),
-		}
-		d.rectangles[i] = rectangle
+		x := d.hexToUint(data[base:base+2])
+		base += 2
+		y := d.hexToUint(data[base:base+2])
+		base += 2
+		w := d.hexToUint(data[base:base+2])
+		base += 2
+		h := d.hexToUint(data[base:base+2])
+		base += 2
+		red := d.hexToUint(data[base:base+2])
+		base += 2
+		green := d.hexToUint(data[base:base+2])
+		base += 2
+		blue := d.hexToUint(data[base:base+2])
+		base += 2
+
+		d.rectangles[i] = Rectangle{x, y, w, h, red, green, blue}
 	}
 
 	d.triangles = make([]Triangle, nTriangles)
-	iniT := iniR + (nRectangles * 7) + 14
 	for i := 0; i < nTriangles; i++ {
-		base := iniT + (i * 6) // 6 fields
-		triangle := Triangle{
-			d.hexToUint(data[base:base+2]),
-			d.hexToUint(data[base+2:base+4]),
-			d.hexToUint(data[base+4:base+6]),
-			d.hexToUint(data[base+6:base+8]),
-			d.hexToUint(data[base+8:base+10]),
-			d.hexToUint(data[base+10:base+12]),
-		}
+		p1 := d.hexToUint(data[base:base+2])
+		base += 2
+		p2 := d.hexToUint(data[base:base+2])
+		base += 2
+		p3 := d.hexToUint(data[base:base+2])
+		base += 2
+		red := d.hexToUint(data[base:base+2])
+		base += 2
+		green := d.hexToUint(data[base:base+2])
+		base += 2
+		blue := d.hexToUint(data[base:base+2])
+		base += 2
+
+		triangle := Triangle{p1, p2, p3, red, green, blue}
 		d.triangles[i] = triangle
 	}
 }
 
 func CreateData() *Data {
 	now := time.Now()
-	nCircles := 3 // now.Hour()
-	nRectangles := now.Minute()
-	nTriangles := now.Second()
+	nCircles := 2 //now.Hour()
+	nRectangles := 2 // now.Minute()
+	nTriangles := 2 // now.Second()
 	rd := rand.New(rand.NewSource(now.UnixNano()))
 
     // numero de retangulos, baseado na hora
