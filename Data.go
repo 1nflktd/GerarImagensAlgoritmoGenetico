@@ -117,9 +117,9 @@ func (d *Data) fromString(data string, nCircles, nRectangles, nTriangles int) {
 
 func CreateData() *Data {
 	now := time.Now()
-	nCircles := 2 //now.Hour()
-	nRectangles := 2 // now.Minute()
-	nTriangles := 2 // now.Second()
+	nCircles := 1 //now.Hour()
+	nRectangles := 1 // now.Minute()
+	nTriangles := 1 // now.Second()
 	rd := rand.New(rand.NewSource(now.UnixNano()))
 
     // numero de retangulos, baseado na hora

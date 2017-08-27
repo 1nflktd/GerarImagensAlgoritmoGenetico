@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 	"math/rand"
-	//"math"
+	"math"
 )
 
 type Individuo struct {
@@ -76,7 +76,9 @@ func (iv *Individuo) geraAptidao() {
 			iv.aptidao++
 		}
 	}
-	/*
+}
+
+func (iv *Individuo) geraAptidao2() {
 	nCircles, nRectangles, nTriangles := iv.algoritmo.getNumeroFormas()
 
 	dataSolucao := &Data{}
@@ -88,15 +90,19 @@ func (iv *Individuo) geraAptidao() {
 	// comparar a diferenca entre os valores
 	iv.aptidao = 0
 	for i, c := range dataSolucao.circles {
+		/*
 		iv.aptidao -= int(math.Abs(float64(c.x - data.circles[i].x)))
 		iv.aptidao -= int(math.Abs(float64(c.y - data.circles[i].y)))
 		iv.aptidao -= int(math.Abs(float64(c.r - data.circles[i].r)))
 		iv.aptidao -= int(math.Abs(float64(c.red - data.circles[i].red)))
 		iv.aptidao -= int(math.Abs(float64(c.green - data.circles[i].green)))
 		iv.aptidao -= int(math.Abs(float64(c.blue - data.circles[i].blue)))
+		*/
+		iv.aptidao -= int(math.Abs(float64(c.x + c.y + c.r + c.red + c.green + c.blue - data.circles[i].x - data.circles[i].y - data.circles[i].r - data.circles[i].red - data.circles[i].green - data.circles[i].blue)))
 	}
 
 	for i, c := range dataSolucao.rectangles {
+		/*
 		iv.aptidao -= int(math.Abs(float64(c.x - data.rectangles[i].x)))
 		iv.aptidao -= int(math.Abs(float64(c.y - data.rectangles[i].y)))
 		iv.aptidao -= int(math.Abs(float64(c.w - data.rectangles[i].w)))
@@ -104,17 +110,21 @@ func (iv *Individuo) geraAptidao() {
 		iv.aptidao -= int(math.Abs(float64(c.red - data.rectangles[i].red)))
 		iv.aptidao -= int(math.Abs(float64(c.green - data.rectangles[i].green)))
 		iv.aptidao -= int(math.Abs(float64(c.blue - data.rectangles[i].blue)))
+		*/
+		iv.aptidao -= int(math.Abs(float64(c.x + c.y + c.w + c.h + c.red + c.green + c.blue - data.rectangles[i].x - data.rectangles[i].y - data.rectangles[i].w - data.rectangles[i].h - data.rectangles[i].red - data.rectangles[i].green - data.rectangles[i].blue)))
 	}
 
 	for i, c := range dataSolucao.triangles {
+		/*
 		iv.aptidao -= int(math.Abs(float64(c.p1 - data.triangles[i].p1)))
 		iv.aptidao -= int(math.Abs(float64(c.p2 - data.triangles[i].p2)))
 		iv.aptidao -= int(math.Abs(float64(c.p3 - data.triangles[i].p3)))
 		iv.aptidao -= int(math.Abs(float64(c.red - data.triangles[i].red)))
 		iv.aptidao -= int(math.Abs(float64(c.green - data.triangles[i].green)))
 		iv.aptidao -= int(math.Abs(float64(c.blue - data.triangles[i].blue)))
+		*/
+		iv.aptidao -= int(math.Abs(float64(c.p1 + c.p2 + c.p3 + c.red + c.green + c.blue - data.triangles[i].p1 - data.triangles[i].p2 - data.triangles[i].p3 - data.triangles[i].red - data.triangles[i].green - data.triangles[i].blue)))
 	}
-	*/
 }
 
 func (iv *Individuo) getAptidao() int {

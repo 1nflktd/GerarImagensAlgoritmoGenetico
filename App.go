@@ -39,6 +39,7 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	fmt.Printf("Iniciando... Aptidão da solução: %d\n", numGenes)
 
 	//loop atÃ© o critÃ©rio de parada
+	solucaoAnt := ""
 	for !temSolucao && geracao < numMaxGeracoes {
 		geracao++
 
@@ -48,9 +49,12 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 
 		fmt.Printf("Geração %d | Aptidão: %d | Melhor: %s\n", geracao, individuo0.getAptidao(), individuo0.getGenes())
 
-		data := &Data{}
-		data.fromString(individuo0.getGenes(), d.nCircles, d.nRectangles, d.nTriangles)
-		PrintImage(respWr, req, data)
+		if solucaoAnt != individuo0.getGenes() {
+			data := &Data{}
+			data.fromString(individuo0.getGenes(), d.nCircles, d.nRectangles, d.nTriangles)
+			PrintImage(respWr, req, data)
+			solucaoAnt = individuo0.getGenes()
+		}
 
 		//verifica se tem a solucao
 		temSolucao = populacao.temSolucao(algoritmo.getSolucao())

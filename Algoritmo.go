@@ -51,7 +51,7 @@ func (a *Algoritmo) novaGeracao(populacao * Populacao, elitismo bool) (*Populaca
 	return novaPopulacao
 }
 
-func (a *Algoritmo) obterPontosCorte(pos1, pos2, pos3 int, genes string) (pontoCorte1, pontoCorte2, pontoCorte3 int) {
+func (a *Algoritmo) obterPontosCorte(pos1, pos2, pos3, pos4 int, genes string) (pontoCorte1, pontoCorte2, pontoCorte3, pontoCorte4 int) {
 	i := 0
 	for p, _ := range genes {
 		if i == pos1 {
@@ -60,6 +60,8 @@ func (a *Algoritmo) obterPontosCorte(pos1, pos2, pos3 int, genes string) (pontoC
 			pontoCorte2 = p
 		} else if i == pos3 {
 			pontoCorte3 = p
+		} else if i == pos4 {
+			pontoCorte4 = p
 			break
 		}
 		i++
@@ -76,24 +78,27 @@ func (a *Algoritmo) crossover(individuo1, individuo2 *Individuo) ([2]*Individuo)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	tamanho := len([]rune(genePai1))
-	pos1 := r.Intn((tamanho/3) - 2) + 1
-	pos2 := r.Intn((tamanho/3) - 2) + tamanho / 3
-	pos3 := r.Intn((tamanho/3) - 2) + (tamanho*2) / 3
+	pos1 := r.Intn((tamanho/4) - 2) + 1
+	pos2 := r.Intn((tamanho/4) - 2) + tamanho / 4
+	pos3 := r.Intn((tamanho/4) - 2) + (tamanho*2) / 4
+	pos4 := r.Intn((tamanho/4) - 2) + (tamanho*3) / 4
 
 	//sorteia o ponto de corte
-	pontoCorte1Pai1, pontoCorte2Pai1, pontoCorte3Pai1 := a.obterPontosCorte(pos1, pos2, pos3, genePai1)
-	pontoCorte1Pai2, pontoCorte2Pai2, pontoCorte3Pai2 := a.obterPontosCorte(pos1, pos2, pos3, genePai2)
+	pontoCorte1Pai1, pontoCorte2Pai1, pontoCorte3Pai1, pontoCorte4Pai1 := a.obterPontosCorte(pos1, pos2, pos3, pos4, genePai1)
+	pontoCorte1Pai2, pontoCorte2Pai2, pontoCorte3Pai2, pontoCorte4Pai2 := a.obterPontosCorte(pos1, pos2, pos3, pos4, genePai2)
 
 	//realiza o corte,
 	geneFilho1 := string(genePai1[0:pontoCorte1Pai1])
 	geneFilho1 += string(genePai2[pontoCorte1Pai2:pontoCorte2Pai2])
 	geneFilho1 += string(genePai1[pontoCorte2Pai1:pontoCorte3Pai1])
-	geneFilho1 += string(genePai2[pontoCorte3Pai2:])
+	geneFilho1 += string(genePai2[pontoCorte3Pai2:pontoCorte4Pai2])
+	geneFilho1 += string(genePai1[pontoCorte4Pai1:])
 
 	geneFilho2 := string(genePai2[0:pontoCorte1Pai2])
 	geneFilho2 += string(genePai1[pontoCorte1Pai1:pontoCorte2Pai1])
 	geneFilho2 += string(genePai2[pontoCorte2Pai2:pontoCorte3Pai2])
-	geneFilho2 += string(genePai1[pontoCorte3Pai1:])
+	geneFilho2 += string(genePai1[pontoCorte3Pai1:pontoCorte4Pai1])
+	geneFilho2 += string(genePai2[pontoCorte4Pai2:])
 
 	//cria o novo indivíduo com os genes dos pais
 	filhos := [2]*Individuo{}
