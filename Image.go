@@ -7,7 +7,7 @@ import (
 	"github.com/fogleman/gg"
 )
 
-func PrintImage(respWr http.ResponseWriter, req *http.Request, d *Data) {
+func PrintImage(respWr http.ResponseWriter, req *http.Request, d *Data, label string) {
     dc := gg.NewContext(X, Y)
     dc.SetRGB(0.9, 0.9, 0.9)
     dc.Clear()
@@ -36,5 +36,5 @@ func PrintImage(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	}
 
 	var img image.Image = dc.Image()
-	writeImageWithTemplate(respWr, &img)
+	writeImageWithTemplate(respWr, &img, label)
 }

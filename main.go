@@ -13,23 +13,12 @@ import (
 
 const X, Y = 280, 240
 
-var MainTemplate string = `<!DOCTYPE html>
-	<html lang="en"><head></head>
-	<body>
-		<form action="/image" method="post">
-			<label>Digite seu nome</label>
-			<input type="text" name="nome" id="nome">
-			<input type="submit" value="Enviar">
-		</form>
-	</body>
-	</html>`
-
 func mainHandler(w http.ResponseWriter, r *http.Request) {
-	if tmpl, err := template.New("main").Parse(MainTemplate); err != nil {
-		log.Println("unable to parse main template.")
+	if tmpl, err := template.New("Main.tpl").ParseFiles("Main.tpl"); err != nil {
+		log.Println("unable to parse main template.", err)
 	} else {
 		if err = tmpl.Execute(w, nil); err != nil {
-			log.Println("unable to execute template.")
+			log.Println("unable to execute template.", err)
 		}
 	}
 }
@@ -45,29 +34,27 @@ func imageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := CreateData(r.PostForm["nome"][0])
+	PrintImage(w, r, data, "Objetivo")
+
 	app := &App{}
-	app.Run(w, r, CreateData(r.PostForm["nome"][0]))
+	app.Run(w, r, data)
 }
 
-var ImageTemplate string = `<!DOCTYPE html>
-	<html lang="en"><head></head>
-	<body><img src="data:image/jpg;base64,{{.Image}}"></body>
-	</html>`
-
-func writeImageWithTemplate(w http.ResponseWriter, img *image.Image) {
+func writeImageWithTemplate(w http.ResponseWriter, img *image.Image, label string) {
 	buffer := new(bytes.Buffer)
 	if err := jpeg.Encode(buffer, *img, nil); err != nil {
 		log.Println("unable to encode image.")
 	}
 
-	str := base64.StdEncoding.EncodeToString(buffer.Bytes())
+	imgBase64 := base64.StdEncoding.EncodeToString(buffer.Bytes())
 
-	if tmpl, err := template.New("image").Parse(ImageTemplate); err != nil {
+	if tmpl, err := template.New("Image.tpl").ParseFiles("Image.tpl"); err != nil {
 		log.Println("unable to parse image template.")
 	} else {
-		data := map[string]interface{}{"Image": str}
+		data := map[string]interface{}{"Image": imgBase64, "Label": label}
 		if err = tmpl.Execute(w, data); err != nil {
-			log.Println("unable to execute template.")
+			log.Println("unable to execute template.", err)
 		}
 	}
 }

@@ -52,7 +52,8 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 		if solucaoAnt != individuo0.getGenes() {
 			data := &Data{}
 			data.fromString(individuo0.getGenes(), d.nCircles, d.nRectangles, d.nTriangles)
-			PrintImage(respWr, req, data)
+			label := fmt.Sprintf("Geração %d", geracao)
+			PrintImage(respWr, req, data, label)
 			solucaoAnt = individuo0.getGenes()
 		}
 
