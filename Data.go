@@ -115,31 +115,51 @@ func (d *Data) fromString(data string, nCircles, nRectangles, nTriangles int) {
 	}
 }
 
-func CreateData() *Data {
+func CreateData(name string) *Data {
 	now := time.Now()
 	nCircles := 1 //now.Hour()
 	nRectangles := 1 // now.Minute()
 	nTriangles := 1 // now.Second()
 	rd := rand.New(rand.NewSource(now.UnixNano()))
 
+	nameAscii := []byte(name)
+	red, green, blue := uint8(0), uint8(0), uint8(0)
+	i := 0
+	for _, char := range nameAscii {
+		if i == 0 {
+			red += uint8(char)
+			i++
+		} else if i == 1 {
+			green += uint8(char)
+			i++
+		} else {
+			blue += uint8(char)
+			i = 0
+		}
+	}
+
+	red = red % 255
+	green = green % 255
+	blue = blue % 255
+
     // numero de retangulos, baseado na hora
 	circles := make([]Circle, nCircles)
     for i := 0; i < nCircles; i++ {
-		circle := Circle{uint8(rd.Intn(X)), uint8(rd.Intn(Y)), uint8(rd.Intn(50)), uint8(rd.Intn(255)), uint8(rd.Intn(255)), uint8(rd.Intn(255))}
+		circle := Circle{uint8(rd.Intn(X)), uint8(rd.Intn(Y)), uint8(rd.Intn(50)), red, green, blue}
 		circles[i] = circle
 	}
 
     // numero de circulos, baseado nos minutos
 	rectangles := make([]Rectangle, nRectangles)
     for i := 0; i < nRectangles; i++ {
-		rectangle := Rectangle{uint8(rd.Intn(X)), uint8(rd.Intn(Y)), uint8(rd.Intn(X/5)), uint8(rd.Intn(Y/5)), uint8(rd.Intn(255)), uint8(rd.Intn(255)), uint8(rd.Intn(255))}
+		rectangle := Rectangle{uint8(rd.Intn(X)), uint8(rd.Intn(Y)), uint8(rd.Intn(X/5)), uint8(rd.Intn(Y/5)), red, green, blue}
 		rectangles[i] = rectangle
 	}
 
     // numero de triangulos, baseado nos segundos
 	triangles := make([]Triangle, nTriangles)
     for i := 0; i < nTriangles; i++ {
-		triangle := Triangle{uint8(rd.Intn(X/10)), uint8(rd.Intn(Y/10)), uint8(rd.Intn(Y/10)), uint8(rd.Intn(255)), uint8(rd.Intn(255)), uint8(rd.Intn(255))}
+		triangle := Triangle{uint8(rd.Intn(X/10)), uint8(rd.Intn(Y/10)), uint8(rd.Intn(Y/10)), red, green, blue}
 		triangles[i] = triangle
 	}
 

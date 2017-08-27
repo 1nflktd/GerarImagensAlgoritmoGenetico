@@ -13,14 +13,46 @@ import (
 
 const X, Y = 280, 240
 
+var MainTemplate string = `<!DOCTYPE html>
+	<html lang="en"><head></head>
+	<body>
+		<form action="/image" method="post">
+			<label>Digite seu nome</label>
+			<input type="text" name="nome" id="nome">
+			<input type="submit" value="Enviar">
+		</form>
+	</body>
+	</html>`
+
+func mainHandler(w http.ResponseWriter, r *http.Request) {
+	if tmpl, err := template.New("main").Parse(MainTemplate); err != nil {
+		log.Println("unable to parse main template.")
+	} else {
+		if err = tmpl.Execute(w, nil); err != nil {
+			log.Println("unable to execute template.")
+		}
+	}
+}
+
 func imageHandler(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Println("Erro ao obter valores do formulario")
+		return
+	}
+
+	if r.PostForm["nome"] == nil {
+		http.Redirect(w, r, "/", 200)
+		return
+	}
+
 	app := &App{}
-	app.Run(w, r, CreateData())
+	app.Run(w, r, CreateData(r.PostForm["nome"][0]))
 }
 
 var ImageTemplate string = `<!DOCTYPE html>
 	<html lang="en"><head></head>
-	<body><img src="data:image/jpg;base64,{{.Image}}"></body>`
+	<body><img src="data:image/jpg;base64,{{.Image}}"></body>
+	</html>`
 
 func writeImageWithTemplate(w http.ResponseWriter, img *image.Image) {
 	buffer := new(bytes.Buffer)
@@ -41,6 +73,7 @@ func writeImageWithTemplate(w http.ResponseWriter, img *image.Image) {
 }
 
 func main() {
-	http.HandleFunc("/image/", imageHandler)
+	http.HandleFunc("/image", imageHandler)
+	http.HandleFunc("/", mainHandler)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
