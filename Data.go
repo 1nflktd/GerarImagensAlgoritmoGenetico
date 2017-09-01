@@ -34,7 +34,7 @@ func NewData(circles []Circle, rectangles []Rectangle, triangles []Triangle, nCi
 func (d *Data) toString() string {
 	hex := ""
 
-	for _, c := range d.circles {
+for _, c := range d.circles {
 		hex += fmt.Sprintf("%02x%02x%02x%02x%02x%02x", c.x, c.y, c.r, c.red, c.green, c.blue)
 	}
 
@@ -117,9 +117,9 @@ func (d *Data) fromString(data string, nCircles, nRectangles, nTriangles int) {
 
 func CreateData(name string) *Data {
 	now := time.Now()
-	nCircles := 1 //now.Hour()
-	nRectangles := 1 // now.Minute()
-	nTriangles := 1 // now.Second()
+	nCircles := now.Hour() % 4
+	nRectangles := now.Minute() % 4
+	nTriangles := now.Second() % 4
 	rd := rand.New(rand.NewSource(now.UnixNano()))
 
 	nameAscii := []byte(name)
@@ -159,7 +159,7 @@ func CreateData(name string) *Data {
     // numero de triangulos, baseado nos segundos
 	triangles := make([]Triangle, nTriangles)
     for i := 0; i < nTriangles; i++ {
-		triangle := Triangle{uint8(rd.Intn(X/10)), uint8(rd.Intn(Y/10)), uint8(rd.Intn(Y/10)), red, green, blue}
+		triangle := Triangle{uint8(rd.Intn(X/2)), uint8(rd.Intn(Y/2)), uint8(rd.Intn(Y/2)), red, green, blue}
 		triangles[i] = triangle
 	}
 

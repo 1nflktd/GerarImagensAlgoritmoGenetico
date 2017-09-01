@@ -5,7 +5,12 @@ import (
 	"net/http"
 )
 
-type App struct {}
+type App struct {
+	taxaCrossover float64
+	taxaMutacao float64
+	elitismo bool
+	tamanhoPopulacao int
+}
 
 func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	algoritmo := &Algoritmo{}
@@ -16,13 +21,13 @@ func (a *App) Run(respWr http.ResponseWriter, req *http.Request, d *Data) {
 	//Define os caracteres existentes
 	algoritmo.setCaracteres("abcdef1234567890")
 	//taxa de crossover de 60%
-	algoritmo.setTaxaDeCrossover(0.8)
+	algoritmo.setTaxaDeCrossover(a.taxaCrossover)
 	//taxa de mutação de 3%
-	algoritmo.setTaxaDeMutacao(0.3)
+	algoritmo.setTaxaDeMutacao(a.taxaMutacao)
 	//elitismo
-	elitismo := true
+	elitismo := a.elitismo
 	//tamanho da população
-	tamPop := 2000
+	tamPop := a.tamanhoPopulacao
 	//numero mÃ¡ximo de gerações
 	numMaxGeracoes := 10000
 

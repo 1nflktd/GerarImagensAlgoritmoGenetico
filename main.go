@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"encoding/base64"
 	"html/template"
+	"flag"
+	"strconv"
 
 	"image"
 	"image/jpeg"
@@ -37,7 +39,27 @@ func imageHandler(w http.ResponseWriter, r *http.Request) {
 	data := CreateData(r.PostForm["nome"][0])
 	PrintImage(w, r, data, "Objetivo")
 
-	app := &App{}
+	taxaCrossover, errCrossover := strconv.ParseFloat(r.PostForm["taxaCrossover"][0], 64)
+	if errCrossover != nil {
+		log.Println("Erro ao converter valores do formulario.")
+		return
+	}
+
+	taxaMutacao, errMutacao := strconv.ParseFloat(r.PostForm["taxaMutacao"][0], 64)
+	if errMutacao != nil {
+		log.Println("Erro ao converter valores do formulario.")
+		return
+	}
+
+	elitismo := r.PostForm["elitismo"][0] == "S" 
+
+	tamanhoPopulacao, errMPop := strconv.ParseInt(r.PostForm["tamanhoPopulacao"][0], 10, 32)
+	if errMPop != nil {
+		log.Println("Erro ao converter valores do formulario.")
+		return
+	}
+
+	app := &App{taxaCrossover, taxaMutacao, elitismo, int(tamanhoPopulacao)}
 	app.Run(w, r, data)
 }
 
@@ -60,7 +82,10 @@ func writeImageWithTemplate(w http.ResponseWriter, img *image.Image, label strin
 }
 
 func main() {
+	var porta = flag.String("Porta", "8000", "Digite a porta do servidor")
+	flag.Parse()
+
 	http.HandleFunc("/image", imageHandler)
 	http.HandleFunc("/", mainHandler)
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":" + *porta, nil))
 }
